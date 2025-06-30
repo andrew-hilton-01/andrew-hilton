@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andrew Hilton</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --manila: #f4f1e8;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--manila);
+            color: var(--black);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            border-bottom: 2px solid var(--black);
+            padding-bottom: 2rem;
+        }
+
+        .name {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+            color: var(--black);
+        }
+
+        .title {
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .contact {
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .contact a {
+            color: var(--black);
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: opacity 0.2s ease;
+        }
+
+        .contact a:hover {
+            opacity: 0.7;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-left: 4px solid var(--black);
+            padding-left: 1rem;
+        }
+
+        .bio {
+            max-width: 800px;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .project-card {
+            background: var(--white);
+            border: 2px solid var(--black);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .project-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 8px 8px 0px var(--black);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 250px;
+            background: #f8f8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 2px solid var(--black);
+            font-size: 0.8rem;
+            color: #999;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-content {
+            padding: 1.5rem;
+        }
+
+        .project-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-title a {
+            color: var(--black);
+            text-decoration: underline;
+            transition: opacity 0.2s ease;
+        }
+
+        .project-title a:hover {
+            opacity: 0.7;
+        }
+
+        .project-description {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tech-tag {
+            background: var(--black);
+            color: var(--white);
+            padding: 0.2rem 0.6rem;
+            font-size: 0.8rem;
+            font-weight: 400;
+        }
+
+        .skills {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .skill-category h3 {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .skill-list {
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 2px solid var(--black);
+            margin-top: 4rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Modal for project images */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            border: 3px solid var(--white);
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: var(--white);
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .contact a {
+                display: block;
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="name">Andrew Hilton</h1>
+            <p class="title">Full Stack + AI Engineer</p>
+            <div class="contact">
+                <a href="mailto:hello@andrew-hilton.com">hello@andrew-hilton.com</a>
+                <a href="https://github.com/andrew-hilton-01" target="_blank">GitHub</a>
+                <a href="https://www.linkedin.com/in/andrew-hilton-690106281/" target="_blank">LinkedIn</a>
+                <a href="https://x.com/Hilton0A" target="_blank">X</a>
+            </div>
+        </header>
+
+        <section class="section">
+            <h2 class="section-title">About</h2>
+            <p class="bio">
+                 Formerly T1 Academy Valorant team captain, since retired from esports and have begun
+                 and wrangling AI in the realm of SWE. I'm obsessed with sharp interfaces and how we can utilize LLMs to positively shape the future.
+                 <p> I'm looking to integrate, develop, and expand Human-in-the-Loop products and services to enable teams and individuals to collaborate more meaningfully 
+                    with AI—raising the floor for productivity, creativity, and technical excellence. My focus is on building systems where human judgment and 
+                    machine intelligence coexist and compound.
+                 </p>
+            </p>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card" onclick="openModal('modal1')">
+                    <div class="project-image">
+                        <img src="/images/conversariumgraph.png" style="width:100%;height:auto;display:block;object-fit:contain;margin:0;padding:0;border:none;" />
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">
+                            <a href="https://conversarium.app" target="_blank" onclick="event.stopPropagation();">Conversarium.app</a>
+                        </h3>
+                        <p class="project-description">
+                            AI-powered, deterministic conversation practice for any domain.
+                            Custom API to build convo-graph for given scenario, frontend to traverse and score based on natural language interaction.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">Node.js</span>
+                            <span class="tech-tag">PostgresQL</span>
+                            <span class="tech-tag">Redis</span>
+                            <span class="tech-tag">FastAPI</span>
+                            <span class="tech-tag">Docker</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card" onclick="openModal('modal2')">
+                    <div class="project-image">
+                        <img src="images/demothumb.jpg" style="width:100%;height:auto;display:block;object-fit:contain;margin:0;padding:0;border:none;"></img>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">
+                            <a href="https://gpt-history-graph.vercel.app/" target="_blank" onclick="event.stopPropagation();">ChatGPT History Visualizer</a>
+                        </h3>
+                        <p class="project-description">
+                            A network graph of your conversations.json from ChatGPT, clustered and positioned based on
+                            semantic relavence. All in-browser, no data leaves your machine.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">Graphology</span>
+                            <span class="tech-tag">Sigma.js</span>
+                            <span class="tech-tag">Tensorflow.js</span>
+                            <span class="tech-tag">UMAP.js</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card" onclick="openModal('modal3')">
+                    <div class="project-image">
+                        <img src="images/gptwrapped.jpg" style="width:100%;height:auto;display:block;object-fit:contain;margin:0;padding:0;border:none;" />
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">
+                            <a href="https://gpt-wrapped-sooty.vercel.app/" target="_blank" onclick="event.stopPropagation();">ChatGPT Wrapped</a>
+                        </h3>
+                        <p class="project-description">
+                            Exploratory data analysis of ChatGPT's conversations.json conversartion history.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Motion.dev</span>
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">Tailwind</span>
+                            <span class="tech-tag">JSON manipulation</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card" onclick="openModal('modal4')">
+                    <div class="project-image">
+                        <span>You're looking at it</span>
+                    </div>
+                    <div class="project-content">
+                        <h3 class="project-title">This site</h3>
+                        <p class="project-description">
+                            Simple, static site built with HTML, CSS, and JavaScript.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">HTML</span>
+                            <span class="tech-tag">CSS</span>
+                            <span class="tech-tag">JavaScript</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Skills</h2>
+            <div class="skills">
+                <div class="skill-category">
+                    <h3>Frontend</h3>
+                    <div class="skill-list">
+                        React, Vite<br>
+                        Tailwind CSS<br>
+                        Xyflow, Motion.js<br>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Backend</h3>
+                    <div class="skill-list">
+                        Node.js, Python<br>
+                        FastAPI, REST APIs<br>
+                        PostgreSQL, Redis
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Tools & AI</h3>
+                    <div class="skill-list">
+                        Git, Docker<br>
+                        Cloudflare, Vercel<br>
+                        AI APIs, Tensorflow<br>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>&copy; 2025 Andrew Hilton.</p>
+        </footer>
+    </div>
+
+    <!-- Modals for project images -->
+    <div id="modal1" class="modal">
+        <span class="close" onclick="closeModal('modal1')">&times;</span>
+        <img class="modal-content" src="/images/conversariumgraph.png" alt="Project 1">
+    </div>
+
+    <div id="modal2" class="modal">
+        <span class="close" onclick="closeModal('modal2')">&times;</span>
+        <img class="modal-content" src="images/demothumb.jpg" alt="Project 2">
+    </div>
+
+    <div id="modal3" class="modal">
+        <span class="close" onclick="closeModal('modal3')">&times;</span>
+        <img class="modal-content" src="images/gptwrapped.jpg" alt="ChatGPT Wrapped">
+    </div>
+
+    <div id="modal4" class="modal">
+        <span class="close" onclick="closeModal('modal4')">&times;</span>
+        <img class="modal-content" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjgwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjRmMWU4Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiMwYTBhMGEiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Qcm9qZWN0IFNjcmVlbnNob3QgNDwvdGV4dD4KPC9zdmc+" alt="Project 4">
+    </div>
+
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside the image
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Close modal with escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const openModal = document.querySelector('.modal.show');
+                if (openModal) {
+                    openModal.classList.remove('show');
+                    document.body.style.overflow = 'auto';
+                }
+            }
+        });
+
+        // Smooth scrolling for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
